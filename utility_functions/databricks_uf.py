@@ -1,12 +1,26 @@
 from utility_functions.benchmark import timer
-import csv
-import io
 from connect2Databricks.spark_init import spark_init
 if 'spark' not in locals():
     print('Environment: Databricks-Connect')
-    spark, sqlContext, setting = spark_init()
+    spark, sqlContext, _ = spark_init()
 
 sc = spark.sparkContext
+
+
+@timer
+def clone(df):
+    """
+    Author: Allison Wu
+    Description: avoid the resolved attributes missing problem.
+    see https://issues.apache.org/jira/browse/SPARK-14948.
+    :param df:
+    :return:
+    """
+    df = spark.createDataFrame(df.rdd, df.schema)
+    return df
+
+def clear_cache():
+    sqlContext.clearCache()
 
 
 @timer
@@ -20,10 +34,17 @@ def rdd_to_df(rdd, cache = True):
     return df
 
 
-def list_to_csv_str(x):
-    """Given a list of strings, returns a properly-csv-formatted string."""
-    output = io.StringIO("")
-    csv.writer(output).writerow(x)
-    return output.getvalue().strip()
+@timer
+def collect_and_cache(df):
+    if 'spark' not in locals():
+        print('Environment: Databricks-Connect')
+        _, _, setting = spark_init()
+
+    if 'local' in setting:
+        df = rdd_to_df(df.collect())
+    else:
+        df = df.cache()
+
+    return df
 
 
