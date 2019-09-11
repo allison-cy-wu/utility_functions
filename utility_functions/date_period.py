@@ -2,6 +2,25 @@ from datetime import datetime, timedelta
 from connect2Databricks.read2Databricks import redshift_ccg_read, redshift_cdw_read
 from utility_functions.benchmark import timer
 from utility_functions.custom_errors import *
+from pytz import timezone
+import pytz
+
+
+def find_start_date():
+    # AWS's time zone is UTC.  Need to convert UTC to PST.
+    today = datetime.now(tz = pytz.utc)
+    today = today.astimezone(timezone('US/Pacific'))
+
+    # If it's Monday, run with Friday data since transactions over the weekend are not updated yet.
+    if today.weekday() == 0:  # Monday
+        _, start_date = date_period(-3, datetime.strftime(today, '%Y%m%d'))
+    elif today.weekday() == 6:  # Sunday
+        _, start_date = date_period(-2, datetime.strftime(today, '%Y%m%d'))
+    elif today.weekday() == 5:  # Saturday
+        _, start_date = date_period(-1, datetime.strftime(today, '%Y%m%d'))
+    else:
+        start_date = datetime.strftime(today, '%Y%m%d')
+    return start_date
 
 
 def date_period(period: int, start_date: str = ''):
