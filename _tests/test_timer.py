@@ -1,5 +1,6 @@
 from unittest import TestCase
 from utility_functions.benchmark import timer
+import unittest
 
 
 class TestTimer(TestCase):
@@ -12,4 +13,8 @@ class TestTimer(TestCase):
                 j = j+i
                 i = i+1
         hello()
-        self.assertEqual(0,0)
+        self.assertEqual(0, 0)
+
+
+if __name__ == '__main__':
+    unittest.main()

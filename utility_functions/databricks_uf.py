@@ -7,6 +7,13 @@ if 'spark' not in locals():
 sc = spark.sparkContext
 
 
+def has_column(df, col_name: str):
+    if col_name in df.columns:
+        return True
+    else:
+        return False
+
+
 @timer
 def clone(df):
     """
