@@ -15,7 +15,7 @@ sc = spark.sparkContext
 def permute_columns(df,
                     column_to_order: str,
                     ind_permute: bool = False,
-                    columns_to_permute: list = list()):
+                    columns_to_permute: list = []):
     """
     Author: Allison Wu
     Description: This function permutes the columns specified in columns_to_permute
@@ -40,6 +40,6 @@ def permute_columns(df,
         rand_df = rand_df.\
             withColumnRenamed(c, f'rand_{c}')
 
-    permuted_df = df.join(rand_df, ['id'], how = 'inner')
+    permuted_df = df.join(rand_df, ['id'], how = 'inner').cache()
 
     return permuted_df
