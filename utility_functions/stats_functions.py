@@ -2,6 +2,7 @@ from pyspark.sql.functions import rand
 from pyspark.sql.functions import split, explode, col, ltrim, rtrim, coalesce, countDistinct, broadcast
 from pyspark.sql.window import Window
 import pyspark.sql.functions as func
+from utility_functions.databricks_uf import timer
 from connect2Databricks.spark_init import spark_init
 if 'spark' not in locals():
     print('Environment: Databricks-Connect')
@@ -10,6 +11,7 @@ if 'spark' not in locals():
 sc = spark.sparkContext
 
 
+@timer
 def permute_columns(df,
                     column_to_order: str,
                     ind_permute: bool = False,
