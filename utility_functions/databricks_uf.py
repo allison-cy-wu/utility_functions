@@ -1,10 +1,23 @@
 from utility_functions.benchmark import timer
+from pyspark.sql.dataframe import DataFrame as sparkDataFrame
+from typing import List
 from connect2Databricks.spark_init import spark_init
 if 'spark' not in locals():
     print('Environment: Databricks-Connect')
     spark, sqlContext, _ = spark_init()
 
 sc = spark.sparkContext
+
+
+def unpack_df_col(
+        df: sparkDataFrame,
+        col_name: str,
+) -> List:
+
+    df = df.withColumnRenamed(col_name, 'col_to_extract')
+    list_col_contents = [row.col_to_extract for row in  df.select('col_to_extract').collect()]
+
+    return list_col_contents
 
 
 def has_column(df, col_name: str):
