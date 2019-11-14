@@ -1,0 +1,1 @@
+Get-ChildItem -Path . -Filter *.py -Recurse | Select-String -Pattern "db_env(ironment)*[ ]*=[ ]*'\b(test|prod)\b'" > databricks_environment_err.txt
