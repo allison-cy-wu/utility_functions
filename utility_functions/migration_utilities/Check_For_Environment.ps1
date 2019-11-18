@@ -1,1 +1,1 @@
-Get-ChildItem -Path . -Filter *.py -Recurse | Select-String -Pattern "env(ironment)*[ ]*=[ ]*'\b(DEV|TST|PRD)\b'" > environment_err.txt
+Get-ChildItem -Path . -Filter *.py -Recurse | Select-String -Pattern "env(ironment)*[ ]*=[ ]*'\b(DEV|TST|PRD)\b'" > environment_chk.txt
