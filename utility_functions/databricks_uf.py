@@ -9,6 +9,15 @@ if 'spark' not in locals():
 sc = spark.sparkContext
 
 
+def add_col_prefix(
+        prefix: str,
+        df: sparkDataFrame,
+) -> sparkDataFrame:
+    for col in df.columns:
+        df = df.withColumnRenamed(col, f'{prefix}{col}')
+    return df
+
+
 def unpack_df_col(
         df: sparkDataFrame,
         col_name: str,
@@ -38,6 +47,7 @@ def clone(df):
     """
     df = spark.createDataFrame(df.rdd, df.schema)
     return df
+
 
 def clear_cache():
     sqlContext.clearCache()
