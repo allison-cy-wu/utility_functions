@@ -13,7 +13,7 @@ def find_time_points(
 ) -> Tuple[str]:
     time_points = []
     for p in period_list:
-        time_points.append(date_period(p, start_date))
+        time_points.append(date_period(p, start_date)[1])
 
     return time_points
 
