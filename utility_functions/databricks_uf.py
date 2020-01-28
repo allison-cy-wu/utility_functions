@@ -61,6 +61,8 @@ def pandas_to_df(pd_df,cache=True):
     :param cache: Default True, whether to cache the resulting dataframe
     :return: df, the Spark DataFrame
     """
+    #Enable Arrow before conversion
+    spark.conf.set("spark.sql.execution.arrow.enabled", "true")
     if cache:
         df = spark.createDataFrame(pd_df).cache()
     else:
