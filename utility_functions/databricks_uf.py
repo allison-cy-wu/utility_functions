@@ -53,6 +53,23 @@ def clear_cache():
     sqlContext.clearCache()
 
 
+def pandas_to_df(pd_df,cache=True):
+    """
+    Author: Rich Winkler
+    Description: Creates a Spark DataFrame out of a given Pandas DataFrame
+    :param pd_df: The Pandas DataFrame to be converted to Spark
+    :param cache: Default True, whether to cache the resulting dataframe
+    :return: df, the Spark DataFrame
+    """
+    #Enable Arrow before conversion
+    spark.conf.set("spark.sql.execution.arrow.enabled", "true")
+    if cache:
+        df = spark.createDataFrame(pd_df).cache()
+    else:
+        df = spark.createDataFrame(pd_df)
+
+    return df
+
 @timer
 def rdd_to_df(rdd, cache = True):
     if cache:
