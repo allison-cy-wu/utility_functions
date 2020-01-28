@@ -1,9 +1,21 @@
 from datetime import datetime, timedelta
+from typing import List, Tuple
 from connect2Databricks.read2Databricks import redshift_ccg_read, redshift_cdw_read
 from utility_functions.benchmark import timer
 from utility_functions.custom_errors import *
 from pytz import timezone
 import pytz
+
+
+def find_time_points(
+        start_date: str,
+        period_list: List[int],
+) -> Tuple[str]:
+    time_points = []
+    for p in period_list:
+        time_points.append(date_period(p, start_date))
+
+    return time_points
 
 
 def find_start_date():
