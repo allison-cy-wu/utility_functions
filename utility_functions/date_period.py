@@ -3,6 +3,7 @@ from typing import List, Tuple
 from connect2Databricks.read2Databricks import redshift_ccg_read, redshift_cdw_read
 from utility_functions.benchmark import timer
 from utility_functions.custom_errors import *
+from pyspark.sql import functions as F
 from pytz import timezone
 import pytz
 
@@ -61,6 +62,38 @@ def date_period(period: int, start_date: str = ''):
     end_date: str = datetime.strftime(datetime_start_date + timedelta(days=period), '%Y%m%d')
     start_date: str = datetime.strftime(datetime_start_date, '%Y%m%d')
     return start_date, end_date
+
+
+def add_ltm_period(ih, date_col_name='invc_dt'):
+    """
+    Author: Rich Winkler
+    Description: A function which accepts as input a Spark Dataframe with invoice history data. One of the columns
+    should be named the same as date_col_name
+    :param ih: A Spark Dataframe containing some type of invoice history with a date column as specified in
+        date_col_name
+    :param date_col_name: The name of the date column in the ih dataframe
+    :return: ih, a Spark Dataframe with a new column named ltm_period containing:
+        0 - Prior Prior LTM data
+        1 - Prior LTM data
+        2 - LTM data
+    """
+    if date_col_name not in ih.columns:
+        raise DataValidityError(
+            f'Date column {date_col_name} not present in the table, please check invoice input.')
+
+    ltm_period_dates = list(reversed([date_period(-365 * i)[1] for i in range(1, 4)]))
+    ltm_period_dates.append(date_period(-365)[0])
+
+    case_expr = 'CASE '
+    for i in range(len(ltm_period_dates) - 1):
+        start_dt = ltm_period_dates[i]
+        end_dt = ltm_period_dates[i + 1]
+        case_expr += f'WHEN {date_col_name} >= {start_dt} AND {date_col_name} < {end_dt} THEN {i} '
+    case_expr += 'END'
+
+    ih = ih.withColumn('ltm_period', F.expr(case_expr)) \
+        .filter(ih.ltm_period.isNotNull())
+    return ih
 
 
 @timer
