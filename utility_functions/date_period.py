@@ -1,9 +1,29 @@
 from datetime import datetime, timedelta
+from typing import List, Tuple
 from connect2Databricks.read2Databricks import redshift_ccg_read, redshift_cdw_read
 from utility_functions.benchmark import timer
 from utility_functions.custom_errors import *
 from pytz import timezone
 import pytz
+
+
+def find_time_points(
+        start_date: str,
+        period_list: List[int],
+) -> Tuple[str]:
+    """
+    This function finds multiple time points based on date_period function.
+    > find_time_points('20191201', [-1,0,1])
+    > ['20191130', '20191201', '20191202']
+    :param start_date: str and needs to be in YYYYMMDD format
+    :param period_list: has to be a list of integers
+    :return: Tuple of dates based on the order of the list input.
+    """
+    time_points = []
+    for p in period_list:
+        time_points.append(date_period(p, start_date)[1])
+
+    return time_points
 
 
 def find_start_date():
