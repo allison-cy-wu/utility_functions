@@ -64,7 +64,7 @@ def date_period(period: int, start_date: str = ''):
     return start_date, end_date
 
 
-def add_ltm_period(ih, date_col_name='invc_dt'):
+def add_ltm_period(ih, date_col_name='invc_dt', date_format='YYYYMMDD'):
     """
     Author: Rich Winkler
     Description: A function which accepts as input a Spark Dataframe with invoice history data. One of the columns
@@ -81,6 +81,8 @@ def add_ltm_period(ih, date_col_name='invc_dt'):
         raise DataValidityError(
             f'Date column {date_col_name} not present in the table, please check invoice input.')
 
+    if date_format == 'DATE':
+        date_col_name = f"CAST(date_format(CAST({date_col_name} AS DATE),'YYYYMMdd') AS int)"
     ltm_period_dates = list(reversed([date_period(-365 * i)[1] for i in range(1, 4)]))
     ltm_period_dates.append(date_period(-365)[0])
 
@@ -91,8 +93,8 @@ def add_ltm_period(ih, date_col_name='invc_dt'):
         case_expr += f'WHEN {date_col_name} >= {start_dt} AND {date_col_name} < {end_dt} THEN {i} '
     case_expr += 'END'
 
-    ih = ih.withColumn('ltm_period', F.expr(case_expr)) \
-        .filter(ih.ltm_period.isNotNull())
+    ih = ih.withColumn('ltm_period', F.expr(case_expr))
+    ih = ih.filter(ih.ltm_period.isNotNull())
     return ih
 
 
