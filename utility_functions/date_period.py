@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta
 from typing import List, Tuple
-from connect2Databricks.read2Databricks import redshift_ccg_read, redshift_cdw_read
 from utility_functions.benchmark import timer
 from utility_functions.custom_errors import *
 from pyspark.sql import functions as F
@@ -123,6 +122,7 @@ def bound_date_check(
     :param division: enter either 'CCG' or 'LSG' to make sure it uses the correct credentials
     :return: check_max (TRUE or FALSE), check_min (TRUE or FALSE), max_date, min_date
     """
+    from connect2Databricks.read2Databricks import redshift_ccg_read, redshift_cdw_read
     test_query = ''
     if date_format == 'DATE':
         test_query = \
