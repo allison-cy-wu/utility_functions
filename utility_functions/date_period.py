@@ -4,6 +4,7 @@ from connect2Databricks.read2Databricks import redshift_ccg_read, redshift_cdw_r
 from utility_functions.benchmark import timer
 from utility_functions.custom_errors import *
 from pyspark.sql import functions as F
+from pyspark.sql import DataFrame
 from pytz import timezone
 import pytz
 
@@ -64,7 +65,9 @@ def date_period(period: int, start_date: str = ''):
     return start_date, end_date
 
 
-def add_ltm_period(ih, date_col_name='invc_dt', date_format='YYYYMMDD'):
+def add_ltm_period(ih: DataFrame,
+                   date_col_name: str = 'invc_dt',
+                   date_format: str = 'YYYYMMDD'):
     """
     Author: Rich Winkler
     Description: A function which accepts as input a Spark Dataframe with invoice history data. One of the columns
