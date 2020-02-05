@@ -24,5 +24,8 @@ class TestDatePeriod(TestCase):
                                                                     env='PRD',
                                                                     date_format=date_format)
 
+        self.assertLessEqual(min_date, max_date)
         self.assertTrue(min_date)
         self.assertTrue(max_date)
+        self.assertTrue(check_min)
+        self.assertTrue(check_max)
