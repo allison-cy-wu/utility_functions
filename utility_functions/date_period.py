@@ -34,10 +34,8 @@ def find_start_date():
 
     # If it's Monday, run with Friday data since transactions over the weekend are not updated yet.
     if today.weekday() == 0:  # Monday
-        _, start_date = date_period(-3, datetime.strftime(today, '%Y%m%d'))
-    elif today.weekday() == 6:  # Sunday
         _, start_date = date_period(-2, datetime.strftime(today, '%Y%m%d'))
-    elif today.weekday() == 5:  # Saturday
+    elif today.weekday() == 6:  # Sunday
         _, start_date = date_period(-1, datetime.strftime(today, '%Y%m%d'))
     else:
         start_date = datetime.strftime(today, '%Y%m%d')
