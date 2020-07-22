@@ -1,10 +1,7 @@
 from utility_functions.benchmark import timer
 from pyspark.sql.dataframe import DataFrame as sparkDataFrame
 from typing import List
-from connect2Databricks.spark_init import spark_init
-if 'spark' not in locals():
-    print('Environment: Databricks-Connect')
-    spark, sqlContext, _ = spark_init()
+from connect2Databricks.spark_init import spark
 
 sc = spark.sparkContext
 
@@ -48,9 +45,16 @@ def clone(df):
     df = spark.createDataFrame(df.rdd, df.schema)
     return df
 
-
-def clear_cache():
-    sqlContext.clearCache()
+# @timer
+# def clone_with_partition(
+#         df,
+#         col: str,
+#         s3_bucket_path: str,
+# ):
+#     df.write.parquet(s3_bucket_path).partitionBy(col)
+#     df = spark.read.parquet(s3_bucket_path)
+#
+#     return df
 
 
 def pandas_to_df(pd_df,cache=True):
